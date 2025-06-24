@@ -3,7 +3,9 @@ import { Answer } from "../../enterprise/entities/answer";
 import { AnswerRepository } from "../repositories/answer-repository";
 import { Question } from "../../enterprise/entities/question";
 import { QuestionRepository } from "../repositories/question-repository";
-import { Either, right } from "@/core/either";
+import { Either, left, right } from "@/core/either";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error";
+import { NotAllowedError } from "./errors/not-allowed-error";
 
 interface ChooseQuestionBestAnswerUseCaseInterfaceRequest {
   authorId: string;
@@ -11,7 +13,7 @@ interface ChooseQuestionBestAnswerUseCaseInterfaceRequest {
 }
 
 type ChooseQuestionBestAnswerUseCaseInterfaceResponse = Either<
-  null,
+  ResourceNotFoundError | NotAllowedError,
   {
     question: Question;
   }
@@ -30,12 +32,10 @@ export class ChooseQuestionBestAnswerUseCase {
     const answer = await this.answerRepository.findById(answerId);
 
     if (!answer) {
-      throw new Error("Answer not found.");
+      return left(new ResourceNotFoundError());
     }
     if (answer.authorId.toString() !== authorId) {
-      throw new Error(
-        "You can only choose the best answer for your own question."
-      );
+      return left(new NotAllowedError());
     }
 
     const question = await this.questionRepository.findById(
@@ -43,7 +43,7 @@ export class ChooseQuestionBestAnswerUseCase {
     );
 
     if (!question) {
-      throw new Error("Question not found.");
+      return left(new ResourceNotFoundError());
     }
 
     await this.questionRepository.chooseBestAnswer(

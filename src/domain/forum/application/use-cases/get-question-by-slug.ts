@@ -1,14 +1,13 @@
-import { UniqueValueID } from "@/core/entities/unique-value-id";
 import { Question } from "../../enterprise/entities/question";
 import { QuestionRepository } from "../repositories/question-repository";
 import { Either, left, right } from "@/core/either";
 import { ResourceNotFoundError } from "./errors/resource-not-found-error";
 
-interface GetQuestionBySlugUseCaseInterfaceRequest {
+interface GetQuestionBySlugUseCaseRequest {
   slug: string;
 }
 
-type GetQuestionBySlugUseCaseInterfaceResponse = Either<
+type GetQuestionBySlugUseCaseResponse = Either<
   ResourceNotFoundError,
   {
     question: Question;
@@ -16,12 +15,12 @@ type GetQuestionBySlugUseCaseInterfaceResponse = Either<
 >;
 
 export class GetQuestionBySlugUseCase {
-  constructor(private questionRepository: QuestionRepository) {}
+  constructor(private questionsRepository: QuestionRepository) {}
 
   async execute({
     slug,
-  }: GetQuestionBySlugUseCaseInterfaceRequest): Promise<GetQuestionBySlugUseCaseInterfaceResponse> {
-    const question = await this.questionRepository.findBySlug(slug);
+  }: GetQuestionBySlugUseCaseRequest): Promise<GetQuestionBySlugUseCaseResponse> {
+    const question = await this.questionsRepository.findBySlug(slug);
 
     if (!question) {
       return left(new ResourceNotFoundError());

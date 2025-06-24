@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Desing dirigido à Domínio",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest"

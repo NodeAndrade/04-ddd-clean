@@ -4,6 +4,7 @@ import { UniqueValueID } from "@/core/entities/unique-value-id";
 import { makeAnswer } from "test/repositories/factories/make-answer";
 import { InMemoryAnswerRepository } from "test/repositories/in-memory-answer-repository";
 import { ChooseQuestionBestAnswerUseCase } from "./choose-question-best-answer";
+import { NotAllowedError } from "./errors/not-allowed-error";
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
 let inMemoryAnswersRepository: InMemoryAnswerRepository;
@@ -52,13 +53,12 @@ describe("Choose Question Best Answer Use Case", () => {
     });
     await inMemoryAnswersRepository.create(newAnswer);
 
-    expect(() => {
-      return sut.execute({
-        authorId: new UniqueValueID("author-2").toString(),
-        answerId: newAnswer.id.toString(),
-      });
-    }).rejects.toThrow(
-      "You can only choose the best answer for your own question."
-    );
+    const result = await sut.execute({
+      authorId: new UniqueValueID("author-2").toString(),
+      answerId: newAnswer.id.toString(),
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(NotAllowedError);
   });
 });
