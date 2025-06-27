@@ -3,7 +3,7 @@ import { makeQuestion } from "test/repositories/factories/make-question";
 import { Slug } from "../../enterprise/entities/value-objects/slug";
 import { DeleteQuestionUseCase } from "./delete-question";
 import { UniqueValueID } from "@/core/entities/unique-value-id";
-import { NotAllowedError } from "./errors/not-allowed-error";
+import { NotAllowedError } from "@/core/errors/errors/not-allowed-error";
 import { InMemoryQuestionsAttachmentsRepository } from "test/repositories/in-memory-question-attachments-repository";
 import { makeQuestionAttachment } from "test/repositories/factories/make-question-attachment";
 
